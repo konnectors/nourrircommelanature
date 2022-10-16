@@ -43,7 +43,6 @@ async function start(fields) {
   log('info', 'Parsing list of documents')
   const documents = await parseDocuments($)
 
-  log('info', documents)
   // Here we use the saveBills function even if what we fetch are not bills,
   // but this is the most common case in connectors
   log('info', 'Saving data to Cozy')
