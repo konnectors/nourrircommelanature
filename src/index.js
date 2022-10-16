@@ -3,8 +3,13 @@ const {
   requestFactory,
   scrape,
   log,
-  utils
+  utils,
+  cozyClient
 } = require('cozy-konnector-libs')
+
+const models = cozyClient.new.models
+const { Qualification } = models.document
+
 const request = requestFactory({
   // The debug mode shows all the details about HTTP requests and responses. Very useful for
   // debugging but very verbose. This is why it is commented out by default
@@ -18,8 +23,8 @@ const request = requestFactory({
   jar: true
 })
 
-const VENDOR = 'template'
-const baseUrl = 'http://books.toscrape.com'
+const VENDOR = 'nourrircommelanature.com'
+const baseUrl = 'https://www.nourrircommelanature.com'
 
 module.exports = new BaseKonnector(start)
 
@@ -35,7 +40,7 @@ async function start(fields, cozyParameters) {
   log('info', 'Successfully logged in')
   // The BaseKonnector instance expects a Promise as return of the function
   log('info', 'Fetching the list of documents')
-  const $ = await request(`${baseUrl}/index.html`)
+  const $ = await request(`${baseUrl}/mes-commandes`)
   // cheerio (https://cheerio.js.org/) uses the same api as jQuery (http://jquery.com/)
   log('info', 'Parsing list of documents')
   const documents = await parseDocuments($)
@@ -47,35 +52,26 @@ async function start(fields, cozyParameters) {
     // This is a bank identifier which will be used to link bills to bank operations. These
     // identifiers should be at least a word found in the title of a bank operation related to this
     // bill. It is not case sensitive.
-    identifiers: ['books']
+    contentType: 'application/pdf',
+    identifiers: ['dog', 'mornant'] // The operation title is "original dog mornant"
   })
 }
 
 // This shows authentication using the [signin function](https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#module_signin)
 // even if this in another domain here, but it works as an example
 function authenticate(username, password) {
+  log('info', `login go! ${username} / ${password}`)
   return this.signin({
-    url: `http://quotes.toscrape.com/login`,
-    formSelector: 'form',
-    formData: { username, password },
-    // The validate function will check if the login request was a success. Every website has a
-    // different way to respond: HTTP status code, error message in HTML ($), HTTP redirection
-    // (fullResponse.request.uri.href)...
-    validate: (statusCode, $, fullResponse) => {
-      log(
-        'debug',
-        fullResponse.request.uri.href,
-        'not used here but should be useful for other connectors'
-      )
-      // The login in toscrape.com always works except when no password is set
-      if ($(`a[href='/logout']`).length === 1) {
-        return true
-      } else {
-        // cozy-konnector-libs has its own logging function which format these logs with colors in
-        // standalone and dev mode and as JSON in production mode
-        log('error', $('.error').text())
-        return false
-      }
+    url: `${baseUrl}/mon-compte`,
+    formSelector: 'form#form_formidentification',
+    formData: {
+      veriflogin: 1,
+      formlogin: username,
+      formpass: password
+    },
+    validate: (_statusCode, _$, fullResponse) => {
+      // The login is known as successful when we are redirected to '/espace-client'
+      return fullResponse.request.uri.href == `${baseUrl}/espace-client`
     }
   })
 }
@@ -86,39 +82,55 @@ function authenticate(username, password) {
 function parseDocuments($) {
   // You can find documentation about the scrape function here:
   // https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#scrape
+  // log('info', $('div#liste_commande').html())
   const docs = scrape(
     $,
     {
-      title: {
-        sel: 'h3 a',
-        attr: 'title'
+      invoiceNumber: '.col1 span:last-child',
+      date: {
+        sel: '.col2 span:last-child',
+        parse: str => parseDate(str.split(' ')[1]) // Format: "le 16/10/2022 à 11:25:22"
       },
       amount: {
-        sel: '.price_color',
-        parse: normalizePrice
+        sel: '.col4 span:last-child',
+        parse: str => str.split(' ')[0]
       },
       fileurl: {
-        sel: 'img',
-        attr: 'src',
-        parse: src => `${baseUrl}/${src}`
+        sel: '.col5 .font10 a[target=_blank]',
+        attr: 'href',
+        parse: url => {
+          const commandNbr = url.split('commande=')[1]
+          return `${baseUrl}/ma-facture/telecharger/?commande=${commandNbr}`
+        }
       }
     },
-    'article'
+    'div.article_panier'
   )
+
   return docs.map(doc => ({
     ...doc,
-    // The saveBills function needs a date field
-    // even if it is a little artificial here (these are not real bills)
-    date: new Date(),
     currency: 'EUR',
-    filename: `${utils.formatDate(new Date())}_${VENDOR}_${doc.amount.toFixed(
-      2
-    )}EUR${doc.vendorRef ? '_' + doc.vendorRef : ''}.jpg`,
-    vendor: VENDOR
+    filename: `${utils.formatDate(doc.date)}-${doc.invoiceNumber}.pdf`,
+    vendor: VENDOR,
+    fileAttributes: {
+      metadata: {
+        invoiceNumber: doc.invoiceNumber,
+        contentAuthor: VENDOR,
+        datetime: utils.formatDate(doc.date),
+        datetimeLabel: `issueDate`,
+        carbonCopy: true,
+        qualification: Qualification.getByLabel('grocery_invoice'),
+        isSubscription: false
+      }
+    }
   }))
 }
 
-// Convert a price string to a float
-function normalizePrice(price) {
-  return parseFloat(price.replace('£', '').trim())
+function parseDate(rawDate) {
+  var date = new Date()
+
+  date.setYear(rawDate.split('/')[2])
+  date.setMonth(Number(rawDate.split('/')[1]) - 1, rawDate.split('/')[0]) // The months start to 0
+
+  return date
 }
