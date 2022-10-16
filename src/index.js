@@ -33,9 +33,7 @@ module.exports = new BaseKonnector(start)
 // the account information come from ./konnector-dev-config.json file
 // cozyParameters are static parameters, independents from the account. Most often, it can be a
 // secret api key.
-async function start(fields, cozyParameters) {
-  log('info', 'Authenticating ...')
-  if (cozyParameters) log('debug', 'Found COZY_PARAMETERS')
+async function start(fields) {
   await authenticate.bind(this)(fields.login, fields.password)
   log('info', 'Successfully logged in')
   // The BaseKonnector instance expects a Promise as return of the function
