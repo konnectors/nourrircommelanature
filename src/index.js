@@ -45,6 +45,7 @@ async function start(fields, cozyParameters) {
   log('info', 'Parsing list of documents')
   const documents = await parseDocuments($)
 
+  log('info', documents)
   // Here we use the saveBills function even if what we fetch are not bills,
   // but this is the most common case in connectors
   log('info', 'Saving data to Cozy')
@@ -93,7 +94,7 @@ function parseDocuments($) {
       },
       amount: {
         sel: '.col4 span:last-child',
-        parse: str => str.split(' ')[0]
+        parse: str => Number.parseFloat(str.split(' ')[0].replace(',', '.'))
       },
       fileurl: {
         sel: '.col5 .font10 a[target=_blank]',
