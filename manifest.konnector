@@ -1,13 +1,13 @@
 {
   "version": "1.0.0",
-  "name": "Connector template",
+  "name": "NourrirCommeLaNature",
   "type": "konnector",
   "language": "node",
   "icon": "icon.png",
   "slug": "template",
   "source": "git@github.com:konnectors/template.git",
   "editor": "Cozy",
-  "vendor_link": "Link to the target website",
+  "vendor_link": "https://www.nourrircommelanature.com/",
   "categories": ["others"],
   "fields": {
     "login": {
@@ -37,8 +37,8 @@
     }
   },
   "developer": {
-    "name": "Cozy Cloud",
-    "url": "https://cozy.io"
+    "name": "Peltoche",
+    "url": "https://github.com/Peltoche"
   },
   "langs": ["fr", "en"],
   "locales": {
@@ -79,6 +79,6 @@
       }
     }
   },
-  "banksTransactionRegExp": "\\bbooks\\b",
+  "banksTransactionRegExp": "\\bmornant\\b",
   "manifest_version": "2"
 }
