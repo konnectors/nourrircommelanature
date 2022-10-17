@@ -8,7 +8,7 @@
   "source": "git@github.com:konnectors/template.git",
   "editor": "Cozy",
   "vendor_link": "https://www.nourrircommelanature.com/",
-  "categories": ["others"],
+  "categories": ["shopping"],
   "fields": {
     "login": {
       "type": "text"
