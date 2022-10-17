@@ -11,8 +11,8 @@ What's Cozy?
 What is this konnector about ?
 ------------------------------
 
-This konnector retrieves your <SOME DATA> and <SOME OTHER DATA> from <SERVICE>
-<YOUR DESCRIPTION HERE>
+This konnector retrieves your bills from nourrircommelanature.com
+
 
 ### Open a Pull-Request
 
