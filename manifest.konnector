@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "name": "Nourrir Comme La Nature",
+  "type": "konnector",
+  "language": "node",
+  "icon": "icon.svg",
+  "slug": "nourrircommelanature",
+  "source": "git@github.com:konnectors/nourrircommelanature.git",
+  "editor": "Cozy",
+  "vendor_link": "https://www.nourrircommelanature.com/",
+  "categories": ["shopping"],
+  "fields": {
+    "login": {
+      "type": "text"
+    },
+    "password": {
+      "type": "password"
+    }
+  },
+  "folders": [{"defaultDir": "$administrative/$konnector/$account"}],
+  "data_types": [
+    "bill"
+  ],
+  "screenshots": [],
+  "permissions": {
+    "bank operations": {
+      "type": "io.cozy.bank.operations"
+    },
+    "bills": {
+      "type": "io.cozy.bills"
+    },
+    "files": {
+      "type": "io.cozy.files"
+    },
+    "accounts": {
+      "type": "io.cozy.accounts"
+    }
+  },
+  "developer": {
+    "name": "Peltoche",
+    "url": "https://github.com/Peltoche"
+  },
+  "langs": ["fr", "en"],
+  "locales": {
+    "fr": {
+      "short_description": "Récupère vos factures sur le site Nourrir comme la nature",
+      "long_description": "Récupère vos factures sur le site Nourrir comme la nature",
+      "permissions": {
+        "bank operations": {
+          "description": "Utilisé pour relier les factures à des operations bancaires"
+        },
+        "bills": {
+          "description": "Utilisé pour sauver les données des factures"
+        },
+        "files": {
+          "description": "Utilisé pour sauvegarder les factures"
+        },
+        "accounts": {
+          "description": "Utilisé pour obtenir les données du compte"
+        }
+      }
+    },
+    "en": {
+      "short_description": "Fetch your bills on Nourrir Comme La Nature website",
+      "long_description": "Fetch your bills on Nourrir Comme La Nature website",
+      "permissions": {
+        "bank operations": {
+          "description": "Required to link bank operations to bills"
+        },
+        "bills": {
+          "description": "Required to save the bills data"
+        },
+        "files": {
+          "description": "Required to save the bills"
+        },
+        "accounts": {
+          "description": "Required to get the account's data"
+        }
+      }
+    }
+  },
+  "banksTransactionRegExp": "\\bmornant\\b",
+  "features": [
+    "BILLS",
+    "CARBON_COPY",
+    "DOC_QUALIFICATION_V2",
+    "SENTRY_V2"
+  ],
+  "manifest_version": "2"
+}
