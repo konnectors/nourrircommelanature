@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.0.0",
   "name": "Nourrir Comme La Nature",
   "type": "konnector",
   "language": "node",
@@ -8,9 +8,7 @@
   "source": "git@github.com:konnectors/nourrircommelanature.git",
   "editor": "Cozy",
   "vendor_link": "https://www.nourrircommelanature.com/",
-  "categories": [
-    "shopping"
-  ],
+  "categories": ["shopping"],
   "fields": {
     "login": {
       "type": "text"
@@ -19,11 +17,7 @@
       "type": "password"
     }
   },
-  "folders": [
-    {
-      "defaultDir": "$administrative/$konnector/$account"
-    }
-  ],
+  "folders": [{"defaultDir": "$administrative/$konnector/$account"}],
   "data_types": [
     "bill"
   ],
@@ -46,10 +40,7 @@
     "name": "Peltoche",
     "url": "https://github.com/Peltoche"
   },
-  "langs": [
-    "fr",
-    "en"
-  ],
+  "langs": ["fr", "en"],
   "locales": {
     "fr": {
       "short_description": "Récupère vos factures sur le site Nourrir comme la nature",
